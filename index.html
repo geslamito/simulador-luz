@@ -20,15 +20,15 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     .contenedor input, .contenedor select {
-      width: 90%;
-      padding: 8px;
+      width: 75%;
+      padding: 7px;
       margin-top: 5px;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       border: 1px solid #ccc;
       border-radius: 6px;
     }
     .contenedor button {
-      width: 90%;
+      width: 75%;
       background-color: #004c59;
       color: white;
       padding: 10px;
@@ -47,6 +47,12 @@
       font-size: 12px;
       color: gray;
       margin-top: 15px;
+    }
+    .checklinea {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 15px;
     }
   </style>
 </head>
@@ -80,10 +86,12 @@
   <label>Importe total de tu factura actual (€):</label>
   <input type="number" id="facturaActual" placeholder="Ej: 75" />
 
-  <label style="font-size: 12px; color: gray;">
+  <div class="checklinea">
     <input type="checkbox" id="consentimiento" required />
-    Acepto que mis datos se usen de forma anónima para análisis estadístico y mejora del servicio.
-  </label>
+    <label for="consentimiento" style="font-size: 12px; color: gray;">
+      Acepto que mis datos se usen de forma anónima para análisis estadístico y mejora del servicio.
+    </label>
+  </div>
 
   <button onclick="compararFactura()">Comparar</button>
 
@@ -144,7 +152,6 @@ function compararFactura() {
 
   document.getElementById("resultado").innerHTML = resultado;
 
-  // Enviar datos al proxy
   fetch("https://geslama-proxy.vercel.app/api/simuladorLuz", {
     method: "POST",
     headers: {
