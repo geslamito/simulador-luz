@@ -4,52 +4,92 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Simulador Grupo Geslama</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f9f9f9;
+      padding: 20px;
+      font-family: 'Poppins', sans-serif;
+    }
+    .contenedor {
+      max-width: 450px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .contenedor input, .contenedor select {
+      width: 90%;
+      padding: 8px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .contenedor button {
+      width: 90%;
+      background-color: #004c59;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .contenedor button:hover {
+      background-color: #006978;
+    }
+    .resultado {
+      margin-top: 20px;
+    }
+    .disclaimer {
+      font-size: 12px;
+      color: gray;
+      margin-top: 15px;
+    }
+  </style>
 </head>
-<body style="background-color: #f9f9f9; padding: 20px;">
+<body>
 
-<div style="max-width: 450px; margin: auto; font-family: sans-serif; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
-
+<div class="contenedor">
   <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-    <img src="https://images.squarespace-cdn.com/content/67e7f0318ec1a26d68b4a6f4/c54f697b-91f2-4ffd-88f1-2e63e3e0188f/logo+repsol.png?content-type=image%2Fpng" alt="Logo Repsol" style="height: 50px;">
-    <h2 style="margin: 0;">Simula tu factura con Grupo Geslama</h2>
+    <img src="https://images.squarespace-cdn.com/content/67e7f0318ec1a26d68b4a6f4/c54f697b-91f2-4ffd-88f1-2e63e3e0188f/logo+repsol.png?content-type=image%2Fpng"
+         alt="Logo Repsol" style="height: 50px;">
+    <h2 style="margin: 0; font-size: 1.6em; color: #f97316;">Simula tu factura con Grupo Geslama</h2>
   </div>
 
-  <label>¿Deseas incluir el servicio de mantenimiento?</label><br>
-  <select id="mantenimiento" style="width: 100%; margin-bottom: 10px;">
+  <label>¿Deseas incluir el servicio de mantenimiento?</label>
+  <select id="mantenimiento">
     <option value="si">Sí</option>
     <option value="no">No</option>
   </select>
 
-  <label>Consumo mensual en kWh:
-    <input type="number" id="consumo" placeholder="Ej: 300" style="width: 100%;">
-  </label><br><br>
+  <label>Consumo mensual en kWh:</label>
+  <input type="number" id="consumo" placeholder="Ej: 300" />
 
-  <label>Potencia punta contratada (kW):
-    <input type="number" id="potenciaPunta" placeholder="Ej: 3.45" style="width: 100%;">
-  </label><br><br>
+  <label>Potencia punta contratada (kW):</label>
+  <input type="number" id="potenciaPunta" placeholder="Ej: 3.45" />
 
-  <label>Potencia valle contratada (kW):
-    <input type="number" id="potenciaValle" placeholder="Ej: 3.45" style="width: 100%;">
-  </label><br><br>
+  <label>Potencia valle contratada (kW):</label>
+  <input type="number" id="potenciaValle" placeholder="Ej: 3.45" />
 
-  <label>Días facturados:
-    <input type="number" id="dias" placeholder="Ej: 30" style="width: 100%;">
-  </label><br><br>
+  <label>Días facturados:</label>
+  <input type="number" id="dias" placeholder="Ej: 30" />
 
-  <label>Importe total de tu factura actual (€):
-    <input type="number" id="facturaActual" placeholder="Ej: 75" style="width: 100%;">
-  </label><br><br>
+  <label>Importe total de tu factura actual (€):</label>
+  <input type="number" id="facturaActual" placeholder="Ej: 75" />
 
   <label style="font-size: 12px; color: gray;">
-    <input type="checkbox" id="consentimiento" required>
+    <input type="checkbox" id="consentimiento" required />
     Acepto que mis datos se usen de forma anónima para análisis estadístico y mejora del servicio.
-  </label><br><br>
+  </label>
 
-  <button onclick="compararFactura()" style="width: 100%; background-color: #004c59; color: white; padding: 10px;">Comparar</button>
+  <button onclick="compararFactura()">Comparar</button>
 
-  <div id="resultado" style="margin-top: 20px;"></div>
+  <div id="resultado" class="resultado"></div>
 
-  <p style="font-size: 12px; color: gray; margin-top: 15px;">
+  <p class="disclaimer">
     * Esta simulación es orientativa y no vinculante. El importe final puede variar en función de impuestos, peajes y condiciones específicas de contratación.
   </p>
 </div>
@@ -64,13 +104,8 @@ function compararFactura() {
   const mantenimiento = document.getElementById("mantenimiento").value;
   const consentimiento = document.getElementById("consentimiento").checked;
 
-  if (isNaN(consumo) || isNaN(potenciaPunta) || isNaN(potenciaValle) || isNaN(dias) || isNaN(facturaActual)) {
-    document.getElementById("resultado").innerHTML = "<p style='color:red;'>Rellena todos los campos correctamente.</p>";
-    return;
-  }
-
-  if (!consentimiento) {
-    document.getElementById("resultado").innerHTML = "<p style='color:red;'>Debes aceptar el uso de datos para continuar.</p>";
+  if (!consentimiento || isNaN(consumo) || isNaN(potenciaPunta) || isNaN(potenciaValle) || isNaN(dias) || isNaN(facturaActual)) {
+    document.getElementById("resultado").innerHTML = "<p style='color:red;'>Completa todos los campos correctamente y acepta el uso de datos.</p>";
     return;
   }
 
@@ -96,19 +131,25 @@ function compararFactura() {
   const ahorro = facturaActual - facturaGeslama;
 
   let resultado = `<p><strong>Con Grupo Geslama (${mantenimientoTexto}) pagarías aprox.:</strong> ${facturaGeslama.toFixed(2)} €</p>`;
+
   if (ahorro > 0) {
     resultado += `<p style="color:green;"><strong>¡Podrías ahorrar hasta ${ahorro.toFixed(2)} € al mes!</strong></p>`;
+  } else if (ahorro < -20) {
+    resultado += `<p style="color:orange;"><strong>¡Enhorabuena! Tienes una tarifa estupenda. Pero estate alerta cuando renueves, quizás entonces podamos ofrecerte una mejora.</strong></p>`;
   } else if (ahorro < 0) {
-    resultado += `<p style="color:orange;"><strong>Tu factura actual es ligeramente más baja, pero podrías compensarlo con los beneficios exclusivos de Waylet (descuentos, acumulación de saldo, etc.).</strong></p>`;
+    resultado += `<p style="color:orange;"><strong>Tu factura actual es ligeramente más baja, pero podrías compensarlo con los beneficios exclusivos de Waylet.</strong></p>`;
   } else {
     resultado += `<p><strong>Tu coste sería similar al actual.</strong></p>`;
   }
 
   document.getElementById("resultado").innerHTML = resultado;
 
-  // Enviar datos al proxy en Vercel
+  // Enviar datos al proxy
   fetch("https://geslama-proxy.vercel.app/api/simuladorLuz", {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({
       consumo,
       potenciaPunta,
@@ -116,10 +157,7 @@ function compararFactura() {
       dias,
       facturaActual,
       mantenimiento
-    }),
-    headers: {
-      "Content-Type": "application/json"
-    }
+    })
   });
 }
 </script>
