@@ -1,178 +1,234 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Simulador Grupo Geslama</title>
   <style>
     body {
-      background-color: #f9f9f9;
-      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f5f5;
+      font-family: Arial, sans-serif;
       padding: 20px;
     }
-    .contenedor {
-      max-width: 420px;
+
+    .container {
+      max-width: 480px;
       margin: auto;
-      background: white;
+      background: #fff;
       padding: 25px;
       border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(0,0,0,0.08);
     }
-    .titulo {
+
+    .header {
       display: flex;
       align-items: center;
       gap: 12px;
-      flex-wrap: wrap;
       margin-bottom: 20px;
     }
-    .titulo h2 {
-      color: #f26522;
-      font-size: 1.4rem;
+
+    .header img {
+      height: 45px;
+    }
+
+    .header h2 {
       margin: 0;
+      font-size: 1.6rem;
+      line-height: 1.2;
+      color: #f26522;
     }
-    .titulo img {
-      height: 42px;
+
+    .form-group {
+      margin-bottom: 16px;
     }
+
     label {
-      font-size: 15px;
+      font-weight: bold;
       display: block;
-      margin-top: 10px;
+      margin-bottom: 5px;
     }
-    input[type="number"], select {
+
+    input[type="number"],
+    input[type="text"] {
       width: 100%;
-      padding: 8px;
-      margin-top: 4px;
-      font-size: 15px;
+      padding: 8px 10px;
+      font-size: 1rem;
       border: 1px solid #ccc;
       border-radius: 5px;
     }
+
     .radio-group {
       display: flex;
-      gap: 15px;
+      gap: 20px;
       margin-top: 5px;
+      font-weight: normal;
     }
-    .checkbox-row {
+
+    .checkbox-wrapper {
       display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 15px;
-      font-size: 13px;
-      color: #666;
+      align-items: flex-start;
+      gap: 10px;
+      font-weight: normal;
+      font-size: 0.95rem;
+      color: #333;
+      line-height: 1.4;
     }
-    button {
-      width: 100%;
-      background-color: #004c59;
-      color: white;
-      border: none;
-      padding: 10px;
-      font-size: 16px;
-      margin-top: 15px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+
     #resultado {
       margin-top: 20px;
     }
-    .nota {
-      font-size: 11px;
-      color: gray;
-      margin-top: 12px;
+
+    .btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #004c59;
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .disclaimer {
+      font-size: 0.8rem;
+      color: #777;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 480px) {
+      .header h2 {
+        font-size: 1.4rem;
+      }
     }
   </style>
 </head>
 <body>
-<div class="contenedor">
-  <div class="titulo">
-    <img src="https://images.squarespace-cdn.com/content/67e7f0318ec1a26d68b4a6f4/c54f697b-91f2-4ffd-88f1-2e63e3e0188f/logo+repsol.png" alt="Logo Repsol">
-    <h2>Simula tu factura con Grupo Geslama</h2>
+  <div class="container">
+    <div class="header">
+      <img src="https://images.squarespace-cdn.com/content/67e7f0318ec1a26d68b4a6f4/c54f697b-91f2-4ffd-88f1-2e63e3e0188f/logo+repsol.png?content-type=image%2Fpng" alt="Logo Repsol" />
+      <h2>Simula tu factura con<br />Grupo Geslama</h2>
+    </div>
+
+    <!-- Servicio de mantenimiento -->
+    <div class="form-group">
+      <label>¿Deseas incluir el servicio de mantenimiento?</label>
+      <div class="radio-group">
+        <label><input type="radio" name="mantenimiento" value="si" checked> Sí</label>
+        <label><input type="radio" name="mantenimiento" value="no"> No</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Consumo mensual en kWh:</label>
+      <input type="number" id="consumo" placeholder="Ej: 300" />
+    </div>
+
+    <div class="form-group">
+      <label>Potencia punta contratada (kW):</label>
+      <input type="number" id="potenciaPunta" placeholder="Ej: 3.45" />
+    </div>
+
+    <div class="form-group">
+      <label>Potencia valle contratada (kW):</label>
+      <input type="number" id="potenciaValle" placeholder="Ej: 3.45" />
+    </div>
+
+    <div class="form-group">
+      <label>Días facturados:</label>
+      <input type="number" id="dias" placeholder="Ej: 30" />
+    </div>
+
+    <div class="form-group">
+      <label>Importe total de tu factura actual (€):</label>
+      <input type="number" id="facturaActual" placeholder="Ej: 75" />
+    </div>
+
+    <div class="form-group">
+      <label class="checkbox-wrapper">
+        <input type="checkbox" id="consentimiento" required />
+        <span>Acepto que mis datos se usen de forma anónima para análisis estadístico y mejora del servicio.</span>
+      </label>
+    </div>
+
+    <button onclick="compararFactura()" class="btn">Comparar</button>
+    <div id="resultado"></div>
+
+    <p class="disclaimer">
+      * Esta simulación es orientativa y no vinculante. El importe final puede variar en función de impuestos, peajes y condiciones específicas de contratación.
+    </p>
   </div>
 
-  <label>¿Deseas incluir el servicio de mantenimiento?</label>
-  <div class="radio-group">
-    <label><input type="radio" name="mantenimiento" value="si" checked> Sí</label>
-    <label><input type="radio" name="mantenimiento" value="no"> No</label>
-  </div>
+  <script>
+    function compararFactura() {
+      const consumo = parseFloat(document.getElementById("consumo").value);
+      const potenciaPunta = parseFloat(document.getElementById("potenciaPunta").value);
+      const potenciaValle = parseFloat(document.getElementById("potenciaValle").value);
+      const dias = parseInt(document.getElementById("dias").value);
+      const facturaActual = parseFloat(document.getElementById("facturaActual").value);
+      const mantenimiento = document.querySelector('input[name="mantenimiento"]:checked').value;
+      const consentimiento = document.getElementById("consentimiento").checked;
 
-  <label>Consumo mensual en kWh:
-    <input type="number" id="consumo" placeholder="Ej: 300">
-  </label>
-  <label>Potencia punta contratada (kW):
-    <input type="number" id="potenciaPunta" placeholder="Ej: 3.45">
-  </label>
-  <label>Potencia valle contratada (kW):
-    <input type="number" id="potenciaValle" placeholder="Ej: 3.45">
-  </label>
-  <label>Días facturados:
-    <input type="number" id="dias" placeholder="Ej: 30">
-  </label>
-  <label>Importe total de tu factura actual (€):
-    <input type="number" id="facturaActual" placeholder="Ej: 75">
-  </label>
+      if (isNaN(consumo) || isNaN(potenciaPunta) || isNaN(potenciaValle) || isNaN(dias) || isNaN(facturaActual)) {
+        document.getElementById("resultado").innerHTML = "<p style='color:red;'>Rellena todos los campos correctamente.</p>";
+        return;
+      }
 
-  <div class="checkbox-row">
-    <input type="checkbox" id="consentimiento">
-    <label for="consentimiento">Acepto que mis datos se usen de forma anónima para análisis estadístico y mejora del servicio.</label>
-  </div>
+      if (!consentimiento) {
+        document.getElementById("resultado").innerHTML = "<p style='color:red;'>Debes aceptar el uso de datos para continuar.</p>";
+        return;
+      }
 
-  <button onclick="compararFactura()">Comparar</button>
-  <div id="resultado"></div>
-  <p class="nota">
-    * Esta simulación es orientativa y no vinculante. El importe final puede variar en función de impuestos, peajes y condiciones específicas de contratación.
-  </p>
-</div>
+      // ENVÍO A GOOGLE SHEETS (Vía proxy)
+      fetch("https://geslama-proxy.vercel.app/api/simuladorLuz", {
+        method: "POST",
+        body: JSON.stringify({
+          consumo,
+          potenciaPunta,
+          potenciaValle,
+          dias,
+          facturaActual,
+          mantenimiento
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
 
-<script>
-  function compararFactura() {
-    const consumo = parseFloat(document.getElementById("consumo").value);
-    const potenciaPunta = parseFloat(document.getElementById("potenciaPunta").value);
-    const potenciaValle = parseFloat(document.getElementById("potenciaValle").value);
-    const dias = parseInt(document.getElementById("dias").value);
-    const facturaActual = parseFloat(document.getElementById("facturaActual").value);
-    const mantenimiento = document.querySelector('input[name="mantenimiento"]:checked').value;
-    const consentimiento = document.getElementById("consentimiento").checked;
+      const precioConsumo = mantenimiento === "si" ? 0.1349 : 0.1399;
+      const precioPotenciaDia = 0.081917;
 
-    if (isNaN(consumo) || isNaN(potenciaPunta) || isNaN(potenciaValle) || isNaN(dias) || isNaN(facturaActual)) {
-      document.getElementById("resultado").innerHTML = "<p style='color:red;'>Rellena todos los campos correctamente.</p>";
-      return;
+      const terminoEnergia = consumo * precioConsumo;
+      const terminoPotencia = (potenciaPunta + potenciaValle) * precioPotenciaDia * dias;
+      const subtotal = terminoEnergia + terminoPotencia;
+
+      const impuestoElectrico = subtotal * 0.05113;
+      const subtotalConImpuesto = subtotal + impuestoElectrico;
+      const iva = subtotalConImpuesto * 0.21;
+      let facturaGeslama = subtotal + impuestoElectrico + iva;
+
+      let mantenimientoTexto = "sin servicio de mantenimiento";
+      if (mantenimiento === "si") {
+        const mantenimientoBase = 5.78;
+        const mantenimientoIVA = mantenimientoBase * 0.21;
+        facturaGeslama += mantenimientoBase + mantenimientoIVA;
+        mantenimientoTexto = "con servicio de mantenimiento";
+      }
+
+      const ahorro = facturaActual - facturaGeslama;
+
+      let resultado = `<p><strong>Con Grupo Geslama (${mantenimientoTexto}) pagarías aprox.:</strong> ${facturaGeslama.toFixed(2)} €</p>`;
+
+      if (ahorro > 0) {
+        resultado += `<p style="color:green;"><strong>¡Podrías ahorrar hasta ${ahorro.toFixed(2)} € al mes!</strong></p>`;
+      } else if (ahorro <= -20) {
+        resultado += `<p style="color:orange;"><strong>¡Enhorabuena! Tienes una tarifa estupenda. Pero estate atento cuando renueves, ahí podríamos ayudarte a mejorarla.</strong></p>`;
+      } else {
+        resultado += `<p style="color:orange;"><strong>Tu factura actual es ligeramente más baja, pero podrías compensarlo con los beneficios exclusivos de Waylet (descuentos, acumulación de saldo, etc.).</strong></p>`;
+      }
+
+      document.getElementById("resultado").innerHTML = resultado;
     }
-
-    if (!consentimiento) {
-      document.getElementById("resultado").innerHTML = "<p style='color:red;'>Debes aceptar el uso de datos para continuar.</p>";
-      return;
-    }
-
-    const precioConsumo = mantenimiento === "si" ? 0.1349 : 0.1399;
-    const precioPotenciaDia = 0.081917;
-    const terminoEnergia = consumo * precioConsumo;
-    const terminoPotencia = (potenciaPunta + potenciaValle) * precioPotenciaDia * dias;
-    const subtotal = terminoEnergia + terminoPotencia;
-    const impuestoElectrico = subtotal * 0.05113;
-    const subtotalConImpuesto = subtotal + impuestoElectrico;
-    const iva = subtotalConImpuesto * 0.21;
-    let facturaGeslama = subtotal + impuestoElectrico + iva;
-
-    if (mantenimiento === "si") {
-      const mantenimientoBase = 5.78;
-      const mantenimientoIVA = mantenimientoBase * 0.21;
-      facturaGeslama += mantenimientoBase + mantenimientoIVA;
-    }
-
-    const ahorro = facturaActual - facturaGeslama;
-    let resultado = `<p><strong>Con Grupo Geslama (${mantenimiento === 'si' ? 'con' : 'sin'} servicio de mantenimiento) pagarías aprox.:</strong> ${facturaGeslama.toFixed(2)} €</p>`;
-
-    if (ahorro > 0) {
-      resultado += `<p style="color:green;"><strong>¡Podrías ahorrar hasta ${ahorro.toFixed(2)} € al mes!</strong></p>`;
-    } else if (ahorro < -20) {
-      resultado += `<p style="color:orange;"><strong>¡Enhorabuena! Tienes una tarifa estupenda. Pero estate alerta cuando renueves, podría ser una buena oportunidad para mejorar.</strong></p>`;
-    } else if (ahorro < 0) {
-      resultado += `<p style="color:orange;"><strong>Tu factura actual es ligeramente más baja, pero podrías compensarlo con los beneficios exclusivos de Waylet (descuentos, acumulación de saldo, etc.).</strong></p>`;
-    } else {
-      resultado += `<p><strong>Tu coste sería similar al actual.</strong></p>`;
-    }
-
-    document.getElementById("resultado").innerHTML = resultado;
-  }
-</script>
-
+  </script>
 </body>
 </html>
