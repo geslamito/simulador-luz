@@ -203,21 +203,25 @@
       }
 
       fetch("https://geslama-proxy.vercel.app/api/simuladorLuz", {
-        method: "POST",
-        body: JSON.stringify({
-          consumo,
-          potenciaPunta,
-          potenciaValle,
-          dias,
-          facturaActual,
-          mantenimiento,
-          conduce,
-          litrosMensuales
-        }),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
+  method: "POST",
+  body: JSON.stringify({
+    consumo,
+    potenciaPunta,
+    potenciaValle,
+    dias,
+    facturaActual,
+    mantenimiento,
+    conduce,
+    litrosMensuales,
+    facturaGeslama: facturaGeslama.toFixed(2),
+    ahorro: ahorro.toFixed(2),
+    saldoWaylet: saldoWaylet.toFixed(2)
+  }),
+  headers: {
+    "Content-Type": "application/json"
+  }
+});
+
 
       const precioConsumo = mantenimiento === "si" ? 0.1349 : 0.1399;
       const precioPotenciaDia = 0.081917;
