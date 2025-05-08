@@ -28,7 +28,7 @@ function compararFactura() {
     return;
   }
 
-  const precioConsumo = mantenimiento === "si" ? 0.1349 : 0.1399;
+  const precioConsumo = mantenimiento === "si" ? 0.1299 : 0.1399;
   const precioPotenciaDia = 0.081917;
 
   const terminoEnergia = consumo * precioConsumo;
@@ -50,6 +50,7 @@ function compararFactura() {
 
   const ahorro = facturaActual - facturaGeslama;
   const saldoWaylet = litrosMensuales * 0.10;
+  const ahorroTotal = ahorro + saldoWaylet;
 
   let resultado = `<p><strong>Con Grupo Geslama (${mantenimientoTexto}) pagarías aprox.:</strong> ${facturaGeslama.toFixed(2)} €</p>`;
 
@@ -63,6 +64,10 @@ function compararFactura() {
 
   if (saldoWaylet > 0) {
     resultado += `<p><strong>Además, acumularías ${saldoWaylet.toFixed(2)} € al mes en Waylet por repostar.</strong></p>`;
+  }
+
+  if (ahorroTotal > 0) {
+    resultado += `<p style="font-weight: bold; font-size: 1.1rem; margin-top: 10px;">Ahorro total estimado: <span style="color: green;">${ahorroTotal.toFixed(2)} €</span> al mes.</p>`;
   }
 
   document.getElementById("resultado").innerHTML = resultado;
@@ -80,7 +85,8 @@ function compararFactura() {
       litrosMensuales,
       facturaGeslama: facturaGeslama.toFixed(2),
       ahorro: ahorro.toFixed(2),
-      saldoWaylet: saldoWaylet.toFixed(2)
+      saldoWaylet: saldoWaylet.toFixed(2),
+      ahorroTotal: ahorroTotal.toFixed(2)
     }),
     headers: {
       "Content-Type": "application/json"
