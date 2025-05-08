@@ -10,7 +10,6 @@
       font-family: Arial, sans-serif;
       padding: 20px;
     }
-
     .container {
       max-width: 480px;
       margin: auto;
@@ -19,35 +18,29 @@
       border-radius: 12px;
       box-shadow: 0 0 10px rgba(0,0,0,0.08);
     }
-
     .header {
       display: flex;
       align-items: center;
       gap: 12px;
       margin-bottom: 20px;
     }
-
     .header img {
       height: 60px;
     }
-
     .header h2 {
       margin: 0;
       font-size: 1.6rem;
       line-height: 1.3;
       color: #f26522;
     }
-
     .form-group {
       margin-bottom: 16px;
     }
-
     label {
       font-weight: bold;
       display: block;
       margin-bottom: 5px;
     }
-
     input[type="number"],
     input[type="text"] {
       width: 100%;
@@ -56,14 +49,12 @@
       border: 1px solid #ccc;
       border-radius: 5px;
     }
-
     .radio-group {
       display: flex;
       gap: 20px;
       margin-top: 5px;
       font-weight: normal;
     }
-
     .checkbox-wrapper {
       display: flex;
       align-items: flex-start;
@@ -73,11 +64,9 @@
       color: #333;
       line-height: 1.4;
     }
-
     #resultado {
       margin-top: 20px;
     }
-
     .btn {
       width: 100%;
       padding: 10px;
@@ -89,13 +78,11 @@
       cursor: pointer;
       margin-top: 10px;
     }
-
     .disclaimer {
       font-size: 0.8rem;
       color: #777;
       margin-top: 15px;
     }
-
     @media (max-width: 480px) {
       .header h2 {
         font-size: 1.4rem;
@@ -202,27 +189,7 @@
         return;
       }
 
-      fetch("https://geslama-proxy.vercel.app/api/simuladorLuz", {
-  method: "POST",
-  body: JSON.stringify({
-    consumo,
-    potenciaPunta,
-    potenciaValle,
-    dias,
-    facturaActual,
-    mantenimiento,
-    conduce,
-    litrosMensuales,
-    facturaGeslama: facturaGeslama.toFixed(2),
-    ahorro: ahorro.toFixed(2),
-    saldoWaylet: saldoWaylet.toFixed(2)
-  }),
-  headers: {
-    "Content-Type": "application/json"
-  }
-});
-
-
+      // Cálculo de la factura
       const precioConsumo = mantenimiento === "si" ? 0.1349 : 0.1399;
       const precioPotenciaDia = 0.081917;
 
@@ -261,6 +228,27 @@
       }
 
       document.getElementById("resultado").innerHTML = resultado;
+
+      // Enviar los datos al proxy solo después del cálculo
+      fetch("https://geslama-proxy.vercel.app/api/simuladorLuz", {
+        method: "POST",
+        body: JSON.stringify({
+          consumo,
+          potenciaPunta,
+          potenciaValle,
+          dias,
+          facturaActual,
+          mantenimiento,
+          conduce,
+          litrosMensuales,
+          facturaGeslama: facturaGeslama.toFixed(2),
+          ahorro: ahorro.toFixed(2),
+          saldoWaylet: saldoWaylet.toFixed(2)
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
     }
   </script>
 </body>
