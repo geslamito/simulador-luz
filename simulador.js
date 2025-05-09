@@ -67,7 +67,19 @@ function compararFactura() {
   }
 
   if (ahorroTotal > 0) {
-    resultado += `<p style="font-weight: bold; font-size: 1.1rem; margin-top: 10px;">Ahorro total estimado: <span style="color: green;">${ahorroTotal.toFixed(2)} €</span> al mes.</p>`;
+    resultado += `
+      <p style="font-weight: bold; font-size: 1.1rem; margin-top: 10px;">
+        Ahorro total estimado: <span style="color: green;">${ahorroTotal.toFixed(2)} €</span> al mes.
+      </p>
+      <p style="font-weight: bold; margin-top: 20px;">¿Quieres aprovechar este ahorro?</p>
+      <a href="https://wa.me/34626189906?text=Hola,%20acabo%20de%20simular%20mi%20factura%20en%20la%20web%20de%20Grupo%20Geslama%20y%20quiero%20más%20información.%20Mi%20ahorro%20sería%20de%20${ahorro.toFixed(2)}%20euros%20al%20mes."
+         target="_blank"
+         style="display: inline-block; background-color: #25D366; color: white; padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1rem; margin-top: 10px;">
+        💬 Habla con nosotros por WhatsApp
+      </a>
+      <p style="margin-top: 10px; font-size: 0.9rem;">
+        ¿Prefieres que te llamemos? <a href="/contacto" style="color: #f26522; font-weight: bold;">Déjanos tus datos aquí</a>.
+      </p>`;
   }
 
   document.getElementById("resultado").innerHTML = resultado;
