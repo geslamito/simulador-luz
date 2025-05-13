@@ -22,22 +22,29 @@ function compararFactura() {
   let terminoEnergia = 0;
   let terminoPotencia = 0;
 
+  // Inicializar todas las variables a 0
+  let consumo = 0;
+  let potenciaPunta = 0;
+  let potenciaValle = 0;
+
+  let consumoP1 = 0, consumoP2 = 0, consumoP3 = 0, consumoP4 = 0, consumoP5 = 0, consumoP6 = 0;
+  let potenciaP1 = 0, potenciaP2 = 0, potenciaP3 = 0, potenciaP4 = 0, potenciaP5 = 0, potenciaP6 = 0;
+
   if (tipoCliente === "empresa30") {
-    const consumoP1 = parseFloat(document.getElementById("consumoP1").value) || 0;
-    const consumoP2 = parseFloat(document.getElementById("consumoP2").value) || 0;
-    const consumoP3 = parseFloat(document.getElementById("consumoP3").value) || 0;
-    const consumoP4 = parseFloat(document.getElementById("consumoP4").value) || 0;
-    const consumoP5 = parseFloat(document.getElementById("consumoP5").value) || 0;
-    const consumoP6 = parseFloat(document.getElementById("consumoP6").value) || 0;
+    consumoP1 = parseFloat(document.getElementById("consumoP1").value) || 0;
+    consumoP2 = parseFloat(document.getElementById("consumoP2").value) || 0;
+    consumoP3 = parseFloat(document.getElementById("consumoP3").value) || 0;
+    consumoP4 = parseFloat(document.getElementById("consumoP4").value) || 0;
+    consumoP5 = parseFloat(document.getElementById("consumoP5").value) || 0;
+    consumoP6 = parseFloat(document.getElementById("consumoP6").value) || 0;
 
-    const potenciaP1 = parseFloat(document.getElementById("potenciaP1").value) || 0;
-    const potenciaP2 = parseFloat(document.getElementById("potenciaP2").value) || 0;
-    const potenciaP3 = parseFloat(document.getElementById("potenciaP3").value) || 0;
-    const potenciaP4 = parseFloat(document.getElementById("potenciaP4").value) || 0;
-    const potenciaP5 = parseFloat(document.getElementById("potenciaP5").value) || 0;
-    const potenciaP6 = parseFloat(document.getElementById("potenciaP6").value) || 0;
+    potenciaP1 = parseFloat(document.getElementById("potenciaP1").value) || 0;
+    potenciaP2 = parseFloat(document.getElementById("potenciaP2").value) || 0;
+    potenciaP3 = parseFloat(document.getElementById("potenciaP3").value) || 0;
+    potenciaP4 = parseFloat(document.getElementById("potenciaP4").value) || 0;
+    potenciaP5 = parseFloat(document.getElementById("potenciaP5").value) || 0;
+    potenciaP6 = parseFloat(document.getElementById("potenciaP6").value) || 0;
 
-    // Precios sin IVA
     const preciosConsumo = [0.1799, 0.1759, 0.1719, 0.1699, 0.1409, 0.1309];
     const preciosPotencia = [20.90, 12.90, 5.90, 4.90, 3.90, 2.90];
 
@@ -52,24 +59,23 @@ function compararFactura() {
       terminoPotencia += (kW * preciosPotencia[i] / 365) * dias;
     });
 
-    let subtotal = terminoEnergia + terminoPotencia;
+    const subtotal = terminoEnergia + terminoPotencia;
     const impuestoElectrico = subtotal * 0.05113;
     const iva = (subtotal + impuestoElectrico) * 0.21;
     facturaGeslama = subtotal + impuestoElectrico + iva;
 
     if (mantenimiento === "si") {
       const mensual = 10.735;
-      const mensualConIVA = mensual * 1.21 * (10 / 12); // prorrateado con 2 meses gratis
-      facturaGeslama += mensualConIVA;
+      facturaGeslama += mensual * 1.21 * (10 / 12); // prorrateado con 2 meses gratis
     }
 
     ahorro = facturaActual - facturaGeslama;
     ahorroTotal = ahorro;
 
   } else {
-    const consumo = parseFloat(document.getElementById("consumo").value);
-    const potenciaPunta = parseFloat(document.getElementById("potenciaPunta").value);
-    const potenciaValle = parseFloat(document.getElementById("potenciaValle").value);
+    consumo = parseFloat(document.getElementById("consumo").value);
+    potenciaPunta = parseFloat(document.getElementById("potenciaPunta").value);
+    potenciaValle = parseFloat(document.getElementById("potenciaValle").value);
 
     if (isNaN(consumo) || isNaN(potenciaPunta) || isNaN(potenciaValle) || isNaN(dias) || isNaN(facturaActual)) {
       document.getElementById("resultado").innerHTML = "<p style='color:red;'>Rellena todos los campos correctamente.</p>";
@@ -82,15 +88,14 @@ function compararFactura() {
     terminoEnergia = consumo * precioConsumo;
     terminoPotencia = (potenciaPunta + potenciaValle) * precioPotenciaDia * dias;
 
-    let subtotal = terminoEnergia + terminoPotencia;
+    const subtotal = terminoEnergia + terminoPotencia;
     const impuestoElectrico = subtotal * 0.05113;
     const iva = (subtotal + impuestoElectrico) * 0.21;
     facturaGeslama = subtotal + impuestoElectrico + iva;
 
     if (mantenimiento === "si") {
       const mensual = 8.26;
-      const mensualConIVA = mensual * 1.21 * (10 / 12); // prorrateado con 2 meses gratis
-      facturaGeslama += mensualConIVA;
+      facturaGeslama += mensual * 1.21 * (10 / 12);
     }
 
     ahorro = facturaActual - facturaGeslama;
@@ -134,7 +139,6 @@ function compararFactura() {
 
   document.getElementById("resultado").innerHTML = resultado;
 
-  // Enviar datos al backend (Apps Script)
   fetch("https://geslama-proxy.vercel.app/api/simuladorLuz", {
     method: "POST",
     headers: {
