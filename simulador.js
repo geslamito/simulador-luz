@@ -22,7 +22,6 @@ function compararFactura() {
   let terminoEnergia = 0;
   let terminoPotencia = 0;
 
-  // Inicializar todas las variables a 0
   let consumo = 0;
   let potenciaPunta = 0;
   let potenciaValle = 0;
@@ -65,8 +64,7 @@ function compararFactura() {
     facturaGeslama = subtotal + impuestoElectrico + iva;
 
     if (mantenimiento === "si") {
-      const mensual = 10.735;
-      facturaGeslama += mensual * 1.21 * (10 / 12); // prorrateado con 2 meses gratis
+      facturaGeslama += 10.735 * 1.21 * (10 / 12);
     }
 
     ahorro = facturaActual - facturaGeslama;
@@ -94,16 +92,11 @@ function compararFactura() {
     facturaGeslama = subtotal + impuestoElectrico + iva;
 
     if (mantenimiento === "si") {
-      const mensual = 8.26;
-      facturaGeslama += mensual * 1.21 * (10 / 12);
+      facturaGeslama += 8.26 * 1.21 * (10 / 12);
     }
 
     ahorro = facturaActual - facturaGeslama;
-
-    saldoWaylet = (tipoCliente === "particular" && conduce === "si" && litrosMensuales > 0)
-      ? litrosMensuales * 0.10
-      : 0;
-
+    saldoWaylet = (tipoCliente === "particular" && conduce === "si" && litrosMensuales > 0) ? litrosMensuales * 0.10 : 0;
     ahorroTotal = ahorro + saldoWaylet;
   }
 
@@ -122,28 +115,66 @@ function compararFactura() {
   }
 
   if (ahorroTotal > 0) {
+    const mensajeWhatsApp = `Hola, acabo de simular mi factura en la web de Grupo Geslama como cliente ${tipoCliente.toUpperCase()} y me salía un ahorro estimado de ${ahorro.toFixed(2)} € al mes. Me gustaría recibir más información.`;
+
     resultado += `
       <p style="font-weight: bold; font-size: 1.1rem; margin-top: 10px;">
         Ahorro total estimado: <span style="color: green;">${ahorroTotal.toFixed(2)} €</span> al mes.
       </p>
       <p style="font-weight: bold; margin-top: 20px;">¿Quieres aprovechar este ahorro?</p>
-      <a href="https://wa.me/34626189906?text=Hola,%20acabo%20de%20simular%20mi%20factura%20en%20la%20web%20de%20Grupo%20Geslama%20y%20quiero%20más%20información.%20Mi%20ahorro%20sería%20de%20${ahorro.toFixed(2)}%20euros%20al%20mes."
+      <a href="https://wa.me/34626189906?text=${encodeURIComponent(mensajeWhatsApp)}"
          target="_blank"
          style="display: inline-block; background-color: #25D366; color: white; padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1rem; margin-top: 10px;">
         💬 Habla con nosotros por WhatsApp
       </a>
-      <p style="margin-top: 10px; font-size: 0.9rem;">
-        ¿Prefieres que te llamemos? <a href="/contacto" style="color: #f26522; font-weight: bold;">Déjanos tus datos aquí</a>.
-      </p>`;
+      <div style="margin-top: 25px; padding: 15px; border: 1px solid #ccc; border-radius: 8px;">
+        <p><strong>¿Prefieres que te llamemos?</strong> Déjanos tus datos y te contactamos gratis:</p>
+        <form id="formContacto">
+          <input type="text" name="nombre" placeholder="Tu nombre" required style="width: 100%; padding: 8px; margin-bottom: 8px;">
+          <input type="tel" name="telefono" placeholder="Tu teléfono" required style="width: 100%; padding: 8px; margin-bottom: 8px;">
+          <input type="hidden" name="tipoCliente" value="${tipoCliente}">
+          <input type="hidden" name="facturaActual" value="${facturaActual}">
+          <input type="hidden" name="facturaGeslama" value="${facturaGeslama.toFixed(2)}">
+          <input type="hidden" name="ahorro" value="${ahorro.toFixed(2)}">
+          <input type="hidden" name="ahorroTotal" value="${ahorroTotal.toFixed(2)}">
+          <button type="submit" style="background-color: #f26522; color: white; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold;">📞 Quiero que me llaméis</button>
+        </form>
+        <p id="mensajeConfirmacion" style="margin-top: 10px; color: green;"></p>
+      </div>
+    `;
   }
 
   document.getElementById("resultado").innerHTML = resultado;
 
+  setTimeout(() => {
+    const form = document.getElementById("formContacto");
+    if (form) {
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const datos = Object.fromEntries(formData.entries());
+        datos.contacto = "si";
+
+        fetch("https://geslama-proxy.vercel.app/api/simuladorLuz", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(datos)
+        })
+          .then(res => res.text())
+          .then(() => {
+            form.style.display = "none";
+            document.getElementById("mensajeConfirmacion").innerText = "¡Gracias! Te llamaremos pronto.";
+          })
+          .catch(err => {
+            console.error("Error al enviar contacto:", err);
+          });
+      });
+    }
+  }, 100);
+
   fetch("https://geslama-proxy.vercel.app/api/simuladorLuz", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       tipoCliente,
       mantenimiento,
