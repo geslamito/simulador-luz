@@ -1,9 +1,3 @@
-function toggleLitros() {
-  const conduce = document.querySelector('input[name="conduces"]:checked')?.value;
-  const wrapper = document.getElementById("litrosWrapper");
-  wrapper.style.display = conduce === "si" ? "block" : "none";
-}
-
 function compararFactura() {
   const tipoCliente = document.querySelector('input[name="tipoCliente"]:checked')?.value;
   const mantenimiento = document.querySelector('input[name="mantenimiento"]:checked')?.value;
@@ -14,86 +8,101 @@ function compararFactura() {
   const dias = parseInt(document.getElementById("dias").value);
   const facturaActual = parseFloat(document.getElementById("facturaActual").value);
 
-  if (isNaN(dias) || isNaN(facturaActual) || (conduce === "si" && litrosMensuales <= 0)) {
-    document.getElementById("resultado").innerHTML = "<p style='color:red;'>Rellena todos los campos correctamente.</p>";
-    return;
-  }
-
   if (!consentimiento) {
     document.getElementById("resultado").innerHTML = "<p style='color:red;'>Debes aceptar el uso de datos para continuar.</p>";
     return;
   }
 
   let facturaGeslama = 0;
-  let mantenimientoTexto = "sin servicio de mantenimiento";
-  let ahorro = 0;
   let saldoWaylet = 0;
+  let ahorro = 0;
+  let ahorroTotal = 0;
+  let resultado = "";
+
+  let terminoEnergia = 0;
+  let terminoPotencia = 0;
 
   if (tipoCliente === "empresa30") {
-    const consumos = [1, 2, 3, 4, 5, 6].map(i => parseFloat(document.getElementById(`consumoP${i}`).value));
-    const potencias = [1, 2, 3, 4, 5, 6].map(i => parseFloat(document.getElementById(`potenciaP${i}`).value));
-    if (consumos.some(isNaN) || potencias.some(isNaN)) {
-      document.getElementById("resultado").innerHTML = "<p style='color:red;'>Rellena todos los campos de consumo y potencia (P1-P6).</p>";
-      return;
-    }
+    const consumoP1 = parseFloat(document.getElementById("consumoP1").value) || 0;
+    const consumoP2 = parseFloat(document.getElementById("consumoP2").value) || 0;
+    const consumoP3 = parseFloat(document.getElementById("consumoP3").value) || 0;
+    const consumoP4 = parseFloat(document.getElementById("consumoP4").value) || 0;
+    const consumoP5 = parseFloat(document.getElementById("consumoP5").value) || 0;
+    const consumoP6 = parseFloat(document.getElementById("consumoP6").value) || 0;
 
+    const potenciaP1 = parseFloat(document.getElementById("potenciaP1").value) || 0;
+    const potenciaP2 = parseFloat(document.getElementById("potenciaP2").value) || 0;
+    const potenciaP3 = parseFloat(document.getElementById("potenciaP3").value) || 0;
+    const potenciaP4 = parseFloat(document.getElementById("potenciaP4").value) || 0;
+    const potenciaP5 = parseFloat(document.getElementById("potenciaP5").value) || 0;
+    const potenciaP6 = parseFloat(document.getElementById("potenciaP6").value) || 0;
+
+    // Precios sin IVA
     const preciosConsumo = [0.1799, 0.1759, 0.1719, 0.1699, 0.1409, 0.1309];
     const preciosPotencia = [20.90, 12.90, 5.90, 4.90, 3.90, 2.90];
 
-    const terminoEnergia = consumos.reduce((acc, val, i) => acc + val * preciosConsumo[i], 0);
-    const terminoPotencia = potencias.reduce((acc, val, i) => acc + val * (preciosPotencia[i] / 365) * dias, 0);
+    const consumos = [consumoP1, consumoP2, consumoP3, consumoP4, consumoP5, consumoP6];
+    const potencias = [potenciaP1, potenciaP2, potenciaP3, potenciaP4, potenciaP5, potenciaP6];
 
-    const subtotal = terminoEnergia + terminoPotencia;
+    consumos.forEach((kWh, i) => {
+      terminoEnergia += kWh * preciosConsumo[i];
+    });
+
+    potencias.forEach((kW, i) => {
+      terminoPotencia += (kW * preciosPotencia[i] / 365) * dias;
+    });
+
+    let subtotal = terminoEnergia + terminoPotencia;
     const impuestoElectrico = subtotal * 0.05113;
-    const subtotalConImpuesto = subtotal + impuestoElectrico;
-    const iva = subtotalConImpuesto * 0.21;
+    const iva = (subtotal + impuestoElectrico) * 0.21;
     facturaGeslama = subtotal + impuestoElectrico + iva;
 
     if (mantenimiento === "si") {
-      const mensual = (10 * 10.735) / 12;
-      facturaGeslama += mensual * 1.21;
-      mantenimientoTexto = "con servicio de valor añadido";
+      const mensual = 10.735;
+      const mensualConIVA = mensual * 1.21 * (10 / 12); // prorrateado con 2 meses gratis
+      facturaGeslama += mensualConIVA;
     }
+
+    ahorro = facturaActual - facturaGeslama;
+    ahorroTotal = ahorro;
 
   } else {
     const consumo = parseFloat(document.getElementById("consumo").value);
     const potenciaPunta = parseFloat(document.getElementById("potenciaPunta").value);
     const potenciaValle = parseFloat(document.getElementById("potenciaValle").value);
 
-    if (isNaN(consumo) || isNaN(potenciaPunta) || isNaN(potenciaValle)) {
+    if (isNaN(consumo) || isNaN(potenciaPunta) || isNaN(potenciaValle) || isNaN(dias) || isNaN(facturaActual)) {
       document.getElementById("resultado").innerHTML = "<p style='color:red;'>Rellena todos los campos correctamente.</p>";
       return;
     }
 
-    let precioConsumo = 0.1399;
-    if (mantenimiento === "si") precioConsumo = 0.1299;
+    const precioConsumo = mantenimiento === "si" ? 0.1299 : 0.1399;
+    const precioPotenciaDia = 24.90 / 365;
 
-    let precioPotenciaDia = 0.081917;
-    if (tipoCliente === "empresa20") {
-      precioConsumo = 0.1699;
-      precioPotenciaDia = 24.90 / 365;
-    }
+    terminoEnergia = consumo * precioConsumo;
+    terminoPotencia = (potenciaPunta + potenciaValle) * precioPotenciaDia * dias;
 
-    const terminoEnergia = consumo * precioConsumo;
-    const terminoPotencia = (potenciaPunta + potenciaValle) * precioPotenciaDia * dias;
-    const subtotal = terminoEnergia + terminoPotencia;
+    let subtotal = terminoEnergia + terminoPotencia;
     const impuestoElectrico = subtotal * 0.05113;
-    const subtotalConImpuesto = subtotal + impuestoElectrico;
-    const iva = subtotalConImpuesto * 0.21;
+    const iva = (subtotal + impuestoElectrico) * 0.21;
     facturaGeslama = subtotal + impuestoElectrico + iva;
 
     if (mantenimiento === "si") {
-      const mensual = (10 * 8.26) / 12;
-      facturaGeslama += mensual * 1.21;
-      mantenimientoTexto = "con servicio de valor añadido";
+      const mensual = 8.26;
+      const mensualConIVA = mensual * 1.21 * (10 / 12); // prorrateado con 2 meses gratis
+      facturaGeslama += mensualConIVA;
     }
+
+    ahorro = facturaActual - facturaGeslama;
+
+    saldoWaylet = (tipoCliente === "particular" && conduce === "si" && litrosMensuales > 0)
+      ? litrosMensuales * 0.10
+      : 0;
+
+    ahorroTotal = ahorro + saldoWaylet;
   }
 
-  ahorro = facturaActual - facturaGeslama;
-  saldoWaylet = tipoCliente === "particular" ? litrosMensuales * 0.10 : 0;
-  const ahorroTotal = ahorro + saldoWaylet;
-
-  let resultado = `<p><strong>Con Grupo Geslama (${mantenimientoTexto}) pagarías aprox.:</strong> ${facturaGeslama.toFixed(2)} €</p>`;
+  resultado = `<p><strong>Con Grupo Geslama (${mantenimiento === "si" ? "con" : "sin"} servicio adicional) pagarías aprox.:</strong> ${facturaGeslama.toFixed(2)} €</p>`;
 
   if (ahorro > 0) {
     resultado += `<p style="color:green;"><strong>¡Podrías ahorrar hasta ${ahorro.toFixed(2)} € al mes!</strong></p>`;
@@ -125,8 +134,12 @@ function compararFactura() {
 
   document.getElementById("resultado").innerHTML = resultado;
 
+  // Enviar datos al backend (Apps Script)
   fetch("https://geslama-proxy.vercel.app/api/simuladorLuz", {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({
       tipoCliente,
       mantenimiento,
@@ -137,10 +150,22 @@ function compararFactura() {
       facturaGeslama: facturaGeslama.toFixed(2),
       ahorro: ahorro.toFixed(2),
       saldoWaylet: saldoWaylet.toFixed(2),
-      ahorroTotal: ahorroTotal.toFixed(2)
-    }),
-    headers: {
-      "Content-Type": "application/json"
-    }
+      ahorroTotal: ahorroTotal.toFixed(2),
+      consumo,
+      potenciaPunta,
+      potenciaValle,
+      consumoP1,
+      consumoP2,
+      consumoP3,
+      consumoP4,
+      consumoP5,
+      consumoP6,
+      potenciaP1,
+      potenciaP2,
+      potenciaP3,
+      potenciaP4,
+      potenciaP5,
+      potenciaP6
+    })
   });
 }
